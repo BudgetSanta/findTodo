@@ -50,7 +50,7 @@ void printTodos(FILE *fp) {
     char *ret;                                                  // Pointer to TODO in str
 
     while (fgets(iter_buff, sizeof(iter_buff), fp)) {
-        if ( (ret = strstr(iter_buff, "// TODO")) ) {
+        if ( (ret = strstr(iter_buff, "TODO")) ) {
             printf("[%d] %s", lineCount, ret);
         }
         lineCount++;
