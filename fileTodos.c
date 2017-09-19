@@ -15,20 +15,10 @@ int hasTodos(FILE *fp);
 int main(int argc, char *argv[]) {
 
     /*
-        Revision 1
-            - Search through file give as command line arg
-            - Find single lines with TODOs in them
-            - print out on single lines, info
-                line No. > TODO the rest of the line comment
-
         Ideas for future
             - Multi line TODOs
-            - this file can be used to search through folders or projects
-                    FILE.c
-                1 > TODO fix this
-                8 > TODO fix that
-                9 > TODO etc
-            - Possibly also get branch name?
+            - Possibly also get function name?
+        TODO Recursive search incase it is a project folder?
     */
 
     char input[MAXDIRNAME];                                     // DIRECTORY
