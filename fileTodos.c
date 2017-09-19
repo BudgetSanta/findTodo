@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #define MAX_BUFF 1024
 #define MAX_FNAME 100
+#define MAXDIRNAME 200
 
 // PROTOTYPES
 void printTodos(FILE *fp);
@@ -27,19 +29,30 @@ int main(int argc, char *argv[]) {
             - Possibly also get branch name?
     */
 
-    char filename[MAX_FNAME];                               // FILENAME
+    char input[MAXDIRNAME];                               // DIRECTORY
 
-    if (argc == 2) {
-                strcpy(filename, argv[1]);
+    // collect the directory name, with "." as default
+    if (argc < 2) {
+        strlcpy(input, ".", MAXDIRNAME);
     } else {
-        printf("ERROR: No file supplied\nUsage: %s <file>\n", argv[0]);
-        return 1;                                           // EXIT FAIL
+        strlcpy(input, argv[1], MAXDIRNAME);
     }
 
-    char const* const fileName = argv[1]; /* should check that argc > 1 */
-    FILE* file = fopen(fileName, "r"); /* should check the result */
-    printTodos(file);                                         // PRINT TODOs
-    fclose(file);                                             // CLOSE FILE
+    // check that the name really is a directory
+    struct stat info;
+    if (stat(input, &info) < 0) {                         // Trys to stat input
+        perror(argv[0]); exit(EXIT_FAILURE);
+    }
+    if ((info.st_mode & S_IFMT) != S_IFDIR) {
+        char const* const fileName = argv[1];                   /* should check that argc > 1 */
+        FILE* file = fopen(fileName, "r");                      /* should check the result */
+        printTodos(file);                                       // PRINT TODOs
+        fclose(file);                                           // CLOSE FILE
+    } else {
+        // TODO Iterate through directory files and find TODOs
+        printf("DIRECTORY TODO: %s\n", input);
+    }
+
     return 0;
 }
 
@@ -50,7 +63,7 @@ void printTodos(FILE *fp) {
     char *ret;                                                  // Pointer to TODO in str
 
     while (fgets(iter_buff, sizeof(iter_buff), fp)) {
-        if ( (ret = strstr(iter_buff, "TODO")) ) {
+        if ( (ret = strstr(iter_buff, "TODO ")) ) {
             printf("[%d] %s", lineCount, ret);
         }
         lineCount++;
